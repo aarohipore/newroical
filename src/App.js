@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 // Helper function to convert empty string to 0 for calculations
@@ -234,16 +234,27 @@ function App() {
     }
   };
 
-  // New page calculations
+  // New page calculations - Time Saved Per Doc Framework
   const automationCost = calculateAutomationCost(toNumber(monthlyCredits));
   const annualAutomationCost = automationCost * 12;
-  // Line 241-247: NEW calculation framework
-const timePerDocBefore = (toNumber(fteCount) * (60 * 160)) / toNumber(pagesPerMonth);
-const timePerDocAfter = timePerDocBefore * (1 - 0.80);
-const simpleTimeSavedPerDoc = timePerDocBefore - timePerDocAfter;
-  const newPageHoursSaved = simpleTimeSavedPerDoc  ;
-  const fteAfter = newPageHoursSaved *toNumber(pagesPerMonth) / 9600.0 ;
-  const newPageAnnualSavings = ((toNumber(fteCount) - fteAfter) * toNumber(fteAnnualCost)) - annualAutomationCost;
+  
+  // Time Saved Per Doc Calculation Framework
+  // Step 1: Time per doc before AI = (current FTEs * (60 * 160)) / pages processed monthly
+  const timePerDocBefore = (toNumber(fteCount) * (60 * 160)) / toNumber(pagesPerMonth);
+  // Step 2: Time per doc after AI = time per doc before * (1 - 0.80) = 20% of original time
+  const timePerDocAfter = timePerDocBefore * (1 - 0.80);
+  // Step 3: Time saved per doc = time per doc before - time per doc after
+  const simpleTimeSavedPerDoc = timePerDocBefore - timePerDocAfter;
+  
+  // Calculate FTEs saved using new framework
+  // FTEs saved = (time saved per doc × pages per month) ÷ (60 × 160)
+  const simpleFtesSaved = (simpleTimeSavedPerDoc * toNumber(pagesPerMonth)) / (60 * 160);
+  const fteAfter = toNumber(fteCount) - simpleFtesSaved;
+  
+  // Calculate total monthly hours saved for other calculations
+  const newPageHoursSaved = (simpleTimeSavedPerDoc * toNumber(pagesPerMonth)) / 60.0;
+  // Simple Annual Savings = FTEs saved × FTE annual cost - automation cost
+  const newPageAnnualSavings = (simpleFtesSaved * toNumber(fteAnnualCost)) - annualAutomationCost;
   
   // Advanced calculations
   const totalErrorRate = misinterpretationErrors + matchingErrors + workflowErrors;
@@ -530,13 +541,13 @@ const simpleTimeSavedPerDoc = timePerDocBefore - timePerDocAfter;
                       <div className="inline-hours-saved">
                         <div className="inline-kpi-card">
                           <h4>FTEs Saved</h4>
-                          <div className="kpi-value">{(fteCount - fteAfter).toFixed(1)}</div>
+                          <div className="kpi-value">{simpleFtesSaved.toFixed(1)}</div>
                           <div className="kpi-subtitle">FTEs</div>
                         </div>
                         <div className="inline-kpi-card">
-                          <h4>Time Saved </h4>
-                          <div className="kpi-value">{newPageHoursSaved.toFixed(0)} mins</div>
-                          <div className="kpi-subtitle">per doc</div>
+                                                     <h4>Time Saved</h4>
+                           <div className="kpi-value">{simpleTimeSavedPerDoc.toFixed(1)} min</div>
+                           <div className="kpi-subtitle">Per Document</div>
                         </div>
                       </div>
                     </div>
@@ -955,6 +966,3 @@ const simpleTimeSavedPerDoc = timePerDocBefore - timePerDocAfter;
 }
 
 export default App;
-
-
-
