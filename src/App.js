@@ -237,9 +237,13 @@ function App() {
   // New page calculations
   const automationCost = calculateAutomationCost(toNumber(monthlyCredits));
   const annualAutomationCost = automationCost * 12;
-  const newPageHoursSaved = ((toNumber(fteCount) * (60 * 160.0) / toNumber(pagesPerMonth)) - 1) * (toNumber(pagesPerMonth) / 60.0);
-  const fteAfter = newPageHoursSaved / 160.0;
-  const newPageAnnualSavings = ((toNumber(fteCount) - fteAfter) * 12 * toNumber(fteAnnualCost)) - annualAutomationCost;
+  // Line 241-247: NEW calculation framework
+const timePerDocBefore = (toNumber(fteCount) * (60 * 160)) / toNumber(pagesPerMonth);
+const timePerDocAfter = timePerDocBefore * (1 - 0.80);
+const simpleTimeSavedPerDoc = timePerDocBefore - timePerDocAfter;
+  const newPageHoursSaved = simpleTimeSavedPerDoc  ;
+  const fteAfter = newPageHoursSaved *toNumber(pagesPerMonth) / 9600.0 ;
+  const newPageAnnualSavings = ((toNumber(fteCount) - fteAfter) * toNumber(fteAnnualCost)) - annualAutomationCost;
   
   // Advanced calculations
   const totalErrorRate = misinterpretationErrors + matchingErrors + workflowErrors;
@@ -530,9 +534,9 @@ function App() {
                           <div className="kpi-subtitle">FTEs</div>
                         </div>
                         <div className="inline-kpi-card">
-                          <h4>Hours Saved</h4>
-                          <div className="kpi-value">{newPageHoursSaved.toFixed(0)} hrs</div>
-                          <div className="kpi-subtitle">Monthly</div>
+                          <h4>Time Saved </h4>
+                          <div className="kpi-value">{newPageHoursSaved.toFixed(0)} mins</div>
+                          <div className="kpi-subtitle">per doc</div>
                         </div>
                       </div>
                     </div>
@@ -951,5 +955,6 @@ function App() {
 }
 
 export default App;
+
 
 
