@@ -28,7 +28,7 @@ function App() {
   const [fteCount, setFteCount] = useState(5);
   const [fteAnnualCost, setFteAnnualCost] = useState(50000);
   const [monthlyCredits, setMonthlyCredits] = useState(100000);
-  const [pagesPerMonth, setPagesPerMonth] = useState(200000);
+  const [pagesPerMonth, setPagesPerMonth] = useState(100000);
   
 
   
@@ -951,3 +951,4 @@ function App() {
 }
 
 export default App;
+
